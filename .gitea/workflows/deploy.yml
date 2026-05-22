@@ -1,0 +1,61 @@
+name: Deploy Web to Pages
+
+# Trigger: commit vào main (do source repo push artifact) hoặc tag v*
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout release repo
+        uses: actions/checkout@v4
+
+      - name: Extract dist archive
+        run: |
+          if [ -f dist.tar.gz ]; then
+            tar -xzf dist.tar.gz
+            echo "Extracted dist.tar.gz successfully"
+          else
+            echo "ERROR: dist.tar.gz not found"
+            exit 1
+          fi
+
+      - name: Deploy to gh-pages branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email "ci-bot@hjm.bid"
+          git config user.name "CI Bot"
+
+          # Lưu nội dung dist/ ra thư mục tạm
+          mkdir -p /tmp/deploy
+          cp -r dist/. /tmp/deploy/
+
+          # Copy 404.html nếu có (cần cho SPA routing)
+          if [ -f /tmp/deploy/index.html ] && [ ! -f /tmp/deploy/404.html ]; then
+            cp /tmp/deploy/index.html /tmp/deploy/404.html
+          fi
+
+          # Tạo hoặc reset nhánh gh-pages
+          git fetch origin gh-pages 2>/dev/null || true
+          git checkout --orphan gh-pages-new
+          git reset --hard
+
+          # Copy file từ thư mục tạm vào working tree
+          cp -r /tmp/deploy/. .
+          touch .nojekyll
+
+          git add --all
+          git commit -m "deploy: $(git -C $GITHUB_WORKSPACE log -1 --format='%s') [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+
+          git push origin gh-pages-new:gh-pages --force
+          echo "Deployed to gh-pages branch"

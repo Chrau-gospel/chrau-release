@@ -1,0 +1,10 @@
+{
+  "gateways": [
+    "https://cdn.vgm.tv/ipns/",
+    "https://cdn1.vgm.tv/ipns/",
+    "https://cdn-ct.vgm.tv/ipns/",
+    "https://s3.hjm.bid/"
+  ],
+  "app": "vgm-chrau",
+  "version": "1.1.0"
+}
