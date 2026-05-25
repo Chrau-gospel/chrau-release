@@ -1,25 +1,38 @@
 @echo off
-:: archive.bat — đóng gói dist/ thành dist.tar.gz (Windows)
-:: Dùng: archive.bat [đường-dẫn-dist]
-:: Ví dụ: archive.bat ..\VGM-DANTOC\dist
+REM =======================================================
+REM Usage:
+REM archive.bat C:\path\to\dist
+REM
+REM This will create an archive named dist.tar.gz
+REM in the current working directory.
+REM =======================================================
 
-setlocal
-
-set "DIST_PATH=%~1"
-if "%DIST_PATH%"=="" set "DIST_PATH=dist"
-
-if not exist "%DIST_PATH%\" (
-    echo ERROR: Thu muc '%DIST_PATH%' khong ton tai
-    echo Dung: archive.bat ^<duong-dan-den-dist^>
+REM Check if argument is provided
+IF "%~1"=="" (
+    echo Error: No path provided.
+    echo Usage: %~nx0 C:\path\to\dist
     exit /b 1
 )
 
-echo Dong goi '%DIST_PATH%' -^> dist.tar.gz ...
-tar -czf dist.tar.gz -C "%DIST_PATH%\.." "%~nx1"
-if %errorlevel% neq 0 (
-    echo ERROR: tar that bai. Kiem tra Windows 10+ co san tar.
+REM Save input path
+set INPUT_PATH=%~1
+
+REM Check if directory exists
+IF NOT EXIST "%INPUT_PATH%" (
+    echo Error: Directory "%INPUT_PATH%" does not exist.
     exit /b 1
 )
 
-echo Xong! dist.tar.gz da duoc tao.
-endlocal
+REM Get base directory name (dist)
+for %%I in ("%INPUT_PATH%") do set DIR_NAME=%%~nxI
+
+REM Get parent directory
+for %%I in ("%INPUT_PATH%\..") do set PARENT_DIR=%%~fI
+
+REM Output file name
+set OUTPUT_FILE=%DIR_NAME%.tar.gz
+
+REM Create tar.gz archive
+tar -czf "%OUTPUT_FILE%" -C "%PARENT_DIR%" "%DIR_NAME%"
+
+echo Archive created: %OUTPUT_FILE%

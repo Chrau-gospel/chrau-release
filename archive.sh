@@ -1,18 +1,36 @@
-#!/usr/bin/env bash
-# archive.sh — đóng gói dist/ thành dist.tar.gz
-# Dùng: bash archive.sh [đường-dẫn-dist]
-# Ví dụ: bash archive.sh ../VGM-DANTOC/dist
+#!/bin/bash
 
+# Usage:
+# ./archive.sh /path/to/dist
+#
+# This will create an archive named dist.tar.gz in the current working directory.
+
+# Exit on error
 set -e
 
-DIST_PATH="${1:-dist}"
-
-if [ ! -d "$DIST_PATH" ]; then
-  echo "ERROR: Thư mục '$DIST_PATH' không tồn tại"
-  echo "Dùng: bash archive.sh <đường-dẫn-đến-dist>"
+# Check if path argument is provided
+if [ -z "$1" ]; then
+  echo "Error: No path provided."
+  echo "Usage: $0 /path/to/dist"
   exit 1
 fi
 
-echo "Đóng gói '$DIST_PATH' → dist.tar.gz ..."
-tar -czf dist.tar.gz -C "$(dirname "$DIST_PATH")" "$(basename "$DIST_PATH")"
-echo "Xong! dist.tar.gz ($(du -sh dist.tar.gz | cut -f1))"
+# Get the absolute path of the input
+INPUT_PATH="$1"
+
+# Check if directory exists
+if [ ! -d "$INPUT_PATH" ]; then
+  echo "Error: Directory '$INPUT_PATH' does not exist."
+  exit 1
+fi
+
+# Get the base name of the directory (e.g., dist)
+DIR_NAME=$(basename "$INPUT_PATH")
+
+# Set output file name
+OUTPUT_FILE="${DIR_NAME}.tar.gz"
+
+# Create tar.gz archive
+tar -czf "$OUTPUT_FILE" -C "$(dirname "$INPUT_PATH")" "$DIR_NAME"
+
+echo "Archive created: $OUTPUT_FILE"
