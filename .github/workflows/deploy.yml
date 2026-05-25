@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'dist.tar.gz'
     tags:
       - 'v*'
   workflow_dispatch:
@@ -39,6 +41,10 @@ jobs:
 
           if [ -f /tmp/deploy/index.html ] && [ ! -f /tmp/deploy/404.html ]; then
             cp /tmp/deploy/index.html /tmp/deploy/404.html
+          fi
+
+          if [ -f CNAME ]; then
+            cp CNAME /tmp/deploy/CNAME
           fi
 
           git fetch origin gh-pages 2>/dev/null || true
