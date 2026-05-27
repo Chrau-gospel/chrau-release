@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "R2C7Q9VC6C.tv.vgm.app"
+        ],
+        "components": [
+          {
+            "/": "/*",
+            "comment": "Matches any URL whose path starts with /"
+          }
+        ]
+      }
+    ]
+  }
+}

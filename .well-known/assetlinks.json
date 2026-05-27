@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "mobi.vgm.nextgen",
+      "sha256_cert_fingerprints": [
+        "FA:1D:9E:CE:67:09:51:99:59:7D:ED:B8:A0:A1:8A:62:0A:91:0F:36:5D:46:84:DB:A9:76:93:C0:BD:FA:09:B6"
+      ]
+    }
+  }
+]
